@@ -1,0 +1,88 @@
+#indexbody{
+    background-color: rgb(249, 41, 135);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#sformouter{
+    width: 300px;
+    height: 150px;
+    border-radius: 20px;
+    background-color: white;
+}
+#sformouter>p{
+    width: 100%;
+    text-align: center;
+}
+#sform{
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-evenly;
+}
+#sform>input{
+    outline: none;
+    width: 90%;
+}
+#sform>button{
+    width: 30%;
+}
+a{
+    text-decoration: none;
+}
+#sform>input:focus{
+    border: 2px solid rgb(249, 41, 135);
+    border-radius: 2px;
+}
+#sform>input:focus::placeholder{
+    color: black;
+}
+
+
+#loginbody{
+    background-color: rgb(249, 41, 135);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#lformouter{
+    width: 300px;
+    height: 150px;
+    border-radius: 20px;
+    background-color: white;
+}
+#lformouter>p{
+    width: 100%;
+    text-align: center;
+}
+#lform{
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-evenly;
+}
+#lform>input{
+    outline: none;
+    width: 90%;
+}
+#lform>button{
+    width: 30%;
+}
+a{
+    text-decoration: none;
+}
+#lform>input:focus{
+    border: 2px solid rgb(249, 41, 135);
+    border-radius: 2px;
+}
+#lform>input:focus::placeholder{
+    color: black;
+}
