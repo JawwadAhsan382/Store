@@ -82,12 +82,29 @@ if(!flag){
       allowOutsideClick:false,
       allowEscapeKey:false,
     }).then(async ()=>{
+      const { value: rname } = await Swal.fire({
+        title: "Restaurant Name",
+        input: "text",
+        // inputLabel: "Your restaurant name",
+        inputPlaceholder: "Enter your restaurant name"
+      });
+      if (rname) {
+        Swal.fire({
+          title: "Restaurant added",
+          icon: "success",
+          draggable: false
+        });
+      }
       const docRef = await addDoc(collection(db, "admin"), {
         name:getSname.value,
+        restaurant:rname,
         email: getSemail.value,
       });
       console.log("Document written with ID: ", docRef.id);
-      location.href='./adminDash.html'
+      getSname.value=''
+      getSemail.value=''
+      getSpassword.value=''
+      location.href='./login.html'
     })
   })
   .catch((error) => {
@@ -110,12 +127,29 @@ if(!flag){
       allowOutsideClick:false,
       allowEscapeKey:false,
     }).then(async ()=>{
+      const { value: rname } = await Swal.fire({
+        title: "Restaurant Name",
+        input: "text",
+        // inputLabel: "Your restaurant name",
+        inputPlaceholder: "Enter your restaurant name"
+      });
+      if (rname) {
+        Swal.fire({
+          title: "Restaurant added",
+          icon: "success",
+          draggable: false
+        });
+      }
       const docRef = await addDoc(collection(db, "admin"), {
         name:getSname.value,
+        restaurant:rname,
         email: getSemail.value,
       });
+      getSname.value=''
+      getSemail.value=''
+      getSpassword.value=''
       console.log("Document written with ID: ", docRef.id);
-      location.href='./adminDash.html'
+      location.href='./login.html'
     })
   })
   .catch((error) => {
@@ -169,9 +203,13 @@ if(!flag){
     }).then(async ()=>{
       const docRef = await addDoc(collection(db, "customer"), {
         email: getSemail.value,
+        name:getSname.value,
       });
+      getSname.value=''
+      getSemail.value=''
+      getSpassword.value=''
       console.log("Document written with ID: ", docRef.id);
-      location.href='./customerDash.html'
+      location.href='./login.html'
     })
   })
   .catch((error) => {
@@ -188,7 +226,7 @@ if(!flag){
   .then((userCredential) => {
     const user = userCredential.user;
     Swal.fire({
-      title: `${user.email} signup`,
+      title: `${user.email} signedup`,
       icon: "success",
       draggable: true,
       allowOutsideClick:false,
@@ -196,9 +234,13 @@ if(!flag){
     }).then(async ()=>{
       const docRef = await addDoc(collection(db, "customer"), {
         email: getSemail.value,
+        name:getSname.value,
       });
+      getSname.value=''
+      getSemail.value=''
+      getSpassword.value=''
       console.log("Document written with ID: ", docRef.id);
-      location.href='./customerDash.html'
+      location.href='./login.html'
     })
   })
   .catch((error) => {
@@ -216,9 +258,9 @@ if(!flag){
   }
 }
       }
-      getSname.value=''
-      getSemail.value=''
-      getSpassword.value=''
+      // getSname.value=''
+      // getSemail.value=''
+      // getSpassword.value=''
     }); //then end
   })
 }
@@ -231,7 +273,7 @@ if(getLform){getLform.addEventListener('submit', ()=>{
     draggable:false,
     confirmButtonText: "Admin",
     denyButtonText: "Customer"
-  }).then(async (result) => {
+  }).then(async (result) => {//then start
     if (result.isConfirmed) {
       let flag=false
       const querySnapshot = await getDocs(collection(db, "admin"));
