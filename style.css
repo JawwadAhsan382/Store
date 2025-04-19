@@ -28,21 +28,31 @@
     outline: none;
     width: 90%;
 }
+#sform>div{
+    padding-right: 2px;
+    border: 1px solid black;
+    width: 90%;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+#sform>div>#spassword{
+    border: none;
+    outline: none;
+    width: 80%;
+}
 #sform>button{
     width: 30%;
+}
+.eyes{
+    font-size: smaller;
+}
+.sclose{
+    display: none;
 }
 a{
     text-decoration: none;
 }
-#sform>input:focus{
-    border: 2px solid rgb(249, 41, 135);
-    border-radius: 2px;
-}
-#sform>input:focus::placeholder{
-    color: black;
-}
-
-
 #loginbody{
     background-color: rgb(249, 41, 135);
     width: 100%;
@@ -73,16 +83,25 @@ a{
     outline: none;
     width: 90%;
 }
+#lform>div{
+    padding-right: 2px;
+    border: 1px solid black;
+    width: 90%;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+#lform>div>#lpassword{
+    border: none;
+    outline: none;
+    width: 80%;
+}
+.lclose{
+    display: none;
+}
 #lform>button{
     width: 30%;
 }
 a{
     text-decoration: none;
-}
-#lform>input:focus{
-    border: 2px solid rgb(249, 41, 135);
-    border-radius: 2px;
-}
-#lform>input:focus::placeholder{
-    color: black;
 }

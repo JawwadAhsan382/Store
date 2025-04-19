@@ -9,6 +9,10 @@
   let getLpassword=document.getElementById('lpassword')
   let getLform=document.getElementById('lform')
   let getLout=document.getElementById('lout')
+  let getLopen=document.querySelector('.lopen')
+let getLclose=document.querySelector('.lclose')
+let getSopen=document.querySelector('.sopen')
+let getSclose=document.querySelector('.sclose')
   let getItemForm=document.getElementById('itemform')
   let getAdminContainer=document.getElementById('admincontainer')
   const firebaseConfig = {
@@ -38,6 +42,16 @@
   //   }
   // });
   if(getSform){
+    getSopen.addEventListener('click',()=>{
+      getSclose.style.display='block'
+      getSopen.style.display='none'
+      getSpassword.type='text'
+  })
+  getSclose.addEventListener('click',()=>{
+      getSclose.style.display='none'
+      getSopen.style.display='block'
+      getSpassword.type='password'
+  })
     getSform.addEventListener('submit', ()=>{
     Swal.fire({
       title: "How do you want to signup as?",
@@ -264,7 +278,18 @@ if(!flag){
     }); //then end
   })
 }
-if(getLform){getLform.addEventListener('submit', ()=>{
+if(getLform){
+  getLopen.addEventListener('click',()=>{
+    getLclose.style.display='block'
+    getLopen.style.display='none'
+    getLpassword.type='text'
+})
+getLclose.addEventListener('click',()=>{
+    getLclose.style.display='none'
+    getLopen.style.display='block'
+    getLpassword.type='password'
+})
+  getLform.addEventListener('submit', ()=>{
   Swal.fire({
     title: "How do you want to login as?",
     showDenyButton: true,
