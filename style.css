@@ -1,5 +1,5 @@
 #indexbody{
-    background-color: rgb(249, 41, 135);
+   background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
     width: 100%;
     height: 100vh;
     display: flex;
@@ -10,7 +10,7 @@
     width: 300px;
     height: 200px;
     border-radius: 20px;
-    background-color: white;
+    background-color: whitesmoke;
 }
 #sformouter>p{
     width: 100%;
@@ -26,15 +26,38 @@
 }
 #sform>input{
     outline: none;
+    border: none;
+    border-bottom: 1px solid black;
     width: 90%;
+}
+#sform>input:focus{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#sform>input:hover{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#sform input{
+    background-color: transparent;
+}
+#sform input:focus::placeholder{
+    color: black;
 }
 #sform>div{
     padding-right: 2px;
-    border: 1px solid black;
+    border-bottom: 1px solid black;
     width: 90%;
-    border-radius: 3px;
     display: flex;
     justify-content: space-between;
+}
+#sform>div:focus{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#sform>div:hover{
+    border: 1px solid black;
+    border-radius: 3px;
 }
 #sform>div>#spassword{
     border: none;
@@ -43,6 +66,18 @@
 }
 #sform>button{
     width: 30%;
+    border-radius: 5px;
+    color: aliceblue;
+    border: none;
+    background-image: linear-gradient(to bottom left,#0BCDDF,#F600FE);
+}
+#sform>button:active{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
+}
+#sform>button:hover{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
 }
 .eyes{
     font-size: smaller;
@@ -54,7 +89,7 @@ a{
     text-decoration: none;
 }
 #loginbody{
-    background-color: rgb(249, 41, 135);
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
     width: 100%;
     height: 100vh;
     display: flex;
