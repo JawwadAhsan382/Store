@@ -26,21 +26,60 @@ let getSclose=document.querySelector('.sclose')
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')){
-  //       location.href='./adminDash.html'
-  //     }
-  //     const uid = user.uid;
-  //     // ...
-  //   } else {
-  //     if(location.pathname.endsWith('/adminDash.html')){
-  //       location.href='./index.html'
-  //     }
-  //     // User is signed out
-  //     // ...
-  //   }
-  // });
+  localStorage.setItem('a',6)
+  onAuthStateChanged(auth,async (user) => {
+    if(localStorage.getItem('a')){
+      let A=false
+    let C=false
+    let At
+    let Ct
+    if (user) {
+      if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+        const querySnapshot = await getDocs(collection(db, "admin"));
+querySnapshot.forEach((doc) => {
+  if(user.email==doc.data().email){
+    A=true
+    At=doc.data().time.seconds
+  }
+});
+const query = await getDocs(collection(db, "customer"));
+query.forEach((doc) => {
+  if(user.email==doc.data().email){
+    C=true
+    Ct=doc.data().time.seconds
+  }
+});
+if(A==false && C==true){
+  if(!(location.pathname.endsWith('/customerDash.html'))){
+    location.href='./customerDash.html'
+  }
+}
+else if(A==true && C==false){
+  if(!(location.pathname.endsWith('/adminDash.html'))){
+  location.href='./adminDash.html'
+  }
+}
+else if(A==true && C==true){  
+  if(At>Ct){
+    if(!(location.pathname.endsWith('/adminDash.html'))){
+      location.href='./adminDash.html'
+    }
+  }
+  else if(Ct>At){
+    if(!(location.pathname.endsWith('/customerDash.html'))){
+      location.href='./customerDash.html'
+    }
+  }
+}
+      }
+      const uid = user.uid;
+    } else {
+      if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+        location.href='./index.html'
+      }
+    }
+    }
+  });
   if(getSform){
     getSopen.addEventListener('click',()=>{
       getSclose.style.display='block'
@@ -112,13 +151,18 @@ if(!flag){
       const docRef = await addDoc(collection(db, "admin"), {
         name:getSname.value,
         restaurant:rname,
+        time:Timestamp.now(),
         email: getSemail.value,
       });
       console.log("Document written with ID: ", docRef.id);
       getSname.value=''
       getSemail.value=''
       getSpassword.value=''
-      location.href='./login.html'
+      signOut(auth).then(()=>{
+        location.href='./login.html'
+      }).catch(()=>{
+        console.log('Error 420');
+      })
     })
   })
   .catch((error) => {
@@ -131,16 +175,17 @@ if(!flag){
     });
   });
 }else{
+  localStorage.clear()
   signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;
     Swal.fire({
-      title: `${user.email} signup`,
+      title: `${user.email} signedup`,
       icon: "success",
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(async ()=>{
+    }).then(async ()=>{//ye nahi chala
       const { value: rname } = await Swal.fire({
         title: "Restaurant Name",
         input: "text",
@@ -156,6 +201,7 @@ if(!flag){
       }
       const docRef = await addDoc(collection(db, "admin"), {
         name:getSname.value,
+        time:Timestamp.now(),
         restaurant:rname,
         email: getSemail.value,
       });
@@ -163,7 +209,11 @@ if(!flag){
       getSemail.value=''
       getSpassword.value=''
       console.log("Document written with ID: ", docRef.id);
-      location.href='./login.html'
+      signOut(auth).then(()=>{        
+        location.href='./login.html'
+      }).catch(()=>{
+        console.log('Error 420');
+      })
     })
   })
   .catch((error) => {
@@ -218,12 +268,17 @@ if(!flag){
       const docRef = await addDoc(collection(db, "customer"), {
         email: getSemail.value,
         name:getSname.value,
+        time:Timestamp.now(),
       });
       getSname.value=''
       getSemail.value=''
       getSpassword.value=''
       console.log("Document written with ID: ", docRef.id);
-      location.href='./login.html'
+      signOut(auth).then(()=>{
+        location.href='./login.html'
+      }).catch(()=>{
+        console.log('Error 420');
+      })
     })
   })
   .catch((error) => {
@@ -235,7 +290,8 @@ if(!flag){
       text: errorCode+' '+errorMessage,
     });
   });
-}else{
+}else{  
+  localStorage.clear()
   signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;
@@ -245,16 +301,21 @@ if(!flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(async ()=>{
-      const docRef = await addDoc(collection(db, "customer"), {
-        email: getSemail.value,
-        name:getSname.value,
-      });
-      getSname.value=''
-      getSemail.value=''
-      getSpassword.value=''
-      console.log("Document written with ID: ", docRef.id);
-      location.href='./login.html'
+    }).then(async (data)=>{//ye nahi chala
+        const docRef = await addDoc(collection(db, "customer"), {
+          email: getSemail.value,
+          time:Timestamp.now(),
+          name:getSname.value,
+        });
+        getSname.value=''
+        getSemail.value=''
+        getSpassword.value=''
+        console.log("Document written with ID: ", docRef.id);
+        signOut(auth).then(()=>{        
+          location.href='./login.html'
+        }).catch(()=>{
+          console.log('Error 420');
+        })
     })
   })
   .catch((error) => {
@@ -308,6 +369,7 @@ if(getLemail.value==doc.data().email){
 }
 });
 if(flag){
+  localStorage.clear()
   signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;
@@ -317,7 +379,22 @@ if(flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(()=>{
+    }).then(async ()=>{
+      let flag=false
+      let Bj
+      const querySnapshot = await getDocs(collection(db, "admin"));
+querySnapshot.forEach(async (doc) => {
+  if(user.email==doc.data().email){
+    flag=true
+    Bj=doc.id
+  }
+});
+if(flag){
+  const cityRef = doc(db, 'admin', Bj);
+await updateDoc(cityRef, {
+time: Timestamp.now()
+});
+}
       location.href='./adminDash.html'
     })
   })
@@ -347,6 +424,7 @@ flag=true
 }
 });
 if(flag){
+  localStorage.clear()
   signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;
@@ -356,7 +434,22 @@ if(flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(()=>{
+    }).then(async ()=>{
+      let flag=false
+      let Bj
+      const querySnapshot = await getDocs(collection(db, "customer"));
+querySnapshot.forEach(async (doc) => {
+  if(user.email==doc.data().email){
+    flag=true
+    Bj=doc.id
+  }
+});
+    if(flag){
+      const cityRef = doc(db, 'customer', Bj);
+await updateDoc(cityRef, {
+    time: Timestamp.now()
+});
+    }
       location.href='./customerDash.html'
     })
   })
@@ -384,6 +477,7 @@ if(flag){
 }
 if(getLout){
   getLout.addEventListener('click',()=>{
+    localStorage.clear()
     signOut(auth).then(()=>{
       Swal.fire({
         title: `You signedout`,

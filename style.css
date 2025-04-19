@@ -100,7 +100,7 @@ a{
     width: 300px;
     height: 150px;
     border-radius: 20px;
-    background-color: white;
+    background-color: whitesmoke;
 }
 #lformouter>p{
     width: 100%;
@@ -116,15 +116,38 @@ a{
 }
 #lform>input{
     outline: none;
+    border: none;
+    border-bottom: 1px solid black;
     width: 90%;
+}
+#lform>input:focus{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#lform>input:hover{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#lform input{
+    background-color: transparent;
+}
+#lform input:focus::placeholder{
+    color: black;
 }
 #lform>div{
     padding-right: 2px;
-    border: 1px solid black;
+    border-bottom: 1px solid black;
     width: 90%;
-    border-radius: 3px;
     display: flex;
     justify-content: space-between;
+}
+#lform>div:focus{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+#lform>div:hover{
+    border: 1px solid black;
+    border-radius: 3px;
 }
 #lform>div>#lpassword{
     border: none;
@@ -136,7 +159,33 @@ a{
 }
 #lform>button{
     width: 30%;
+    border-radius: 5px;
+    color: aliceblue;
+    border: none;
+    background-image: linear-gradient(to bottom left,#0BCDDF,#F600FE);
+}
+#lform>button:active{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
+}
+#lform>button:hover{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
 }
 a{
     text-decoration: none;
+}
+@media screen and (max-width:320px){
+    #sformouter{
+        width: 250px;
+        height: 200px;
+        border-radius: 20px;
+        background-color: whitesmoke;
+    }
+    #lformouter{
+        width: 250px;
+        height: 150px;
+        border-radius: 20px;
+        background-color: whitesmoke;
+    }
 }
