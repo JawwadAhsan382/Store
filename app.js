@@ -2,6 +2,7 @@
   import { getFirestore ,collection, addDoc,Timestamp, getDocs, doc, deleteDoc,updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
   import { getAuth,createUserWithEmailAndPassword , signInWithEmailAndPassword ,onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   let getSemail=document.getElementById('semail')
+  let getSname=document.getElementById('sname')
   let getSpassword=document.getElementById('spassword')
   let getSform=document.getElementById('sform')
   let getLemail=document.getElementById('lemail')
@@ -36,7 +37,8 @@
   //     // ...
   //   }
   // });
-  if(getSform){getSform.addEventListener('submit', ()=>{
+  if(getSform){
+    getSform.addEventListener('submit', ()=>{
     Swal.fire({
       title: "How do you want to signup as?",
       showDenyButton: true,
@@ -45,7 +47,7 @@
       draggable:false,
       confirmButtonText: "Admin",
       denyButtonText: "Customer"
-    }).then(async (result) => {
+    }).then(async (result) => {//then start
       if (result.isConfirmed) {
         let flag=false
         const querySnapshot = await getDocs(collection(db, "admin"));
@@ -60,9 +62,9 @@ if(flag){
     title: "Oops...",
     text: `${getSemail.value} exist as admin`,
   });
-}else{
-  try {
-    flag=false
+}else{ //else start
+  try {//try start
+    // flag=false
     const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
   if(getSemail.value==doc.data().email){
@@ -70,10 +72,6 @@ querySnapshot.forEach((doc) => {
   }
 });
 if(!flag){
-  const docRef = await addDoc(collection(db, "admin"), {
-    email: getSemail.value,
-  });
-  console.log("Document written with ID: ", docRef.id);
   createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;
@@ -83,7 +81,12 @@ if(!flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(()=>{
+    }).then(async ()=>{
+      const docRef = await addDoc(collection(db, "admin"), {
+        name:getSname.value,
+        email: getSemail.value,
+      });
+      console.log("Document written with ID: ", docRef.id);
       location.href='./adminDash.html'
     })
   })
@@ -108,6 +111,7 @@ if(!flag){
       allowEscapeKey:false,
     }).then(async ()=>{
       const docRef = await addDoc(collection(db, "admin"), {
+        name:getSname.value,
         email: getSemail.value,
       });
       console.log("Document written with ID: ", docRef.id);
@@ -124,10 +128,10 @@ if(!flag){
     });
   });
 }
-  } catch (e) {
+  } catch (e) {//try end or catch start
     console.error("Error adding document: ", e);
   }
-}
+} //else end
       } 
       else if (result.isDenied) {
         let flag=false
@@ -145,7 +149,7 @@ if(flag){
   });
 }else{
   try {
-    flag=false
+    // flag=false
     const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
   if(getSemail.value==doc.data().email){
@@ -153,10 +157,6 @@ querySnapshot.forEach((doc) => {
   }
 });
 if(!flag){
-  const docRef = await addDoc(collection(db, "customer"), {
-    email: getSemail.value,
-  });
-  console.log("Document written with ID: ", docRef.id);
   createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   .then((userCredential) => {
     const user = userCredential.user;  
@@ -166,7 +166,11 @@ if(!flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(()=>{
+    }).then(async ()=>{
+      const docRef = await addDoc(collection(db, "customer"), {
+        email: getSemail.value,
+      });
+      console.log("Document written with ID: ", docRef.id);
       location.href='./customerDash.html'
     })
   })
@@ -212,9 +216,10 @@ if(!flag){
   }
 }
       }
+      getSname.value=''
       getSemail.value=''
       getSpassword.value=''
-    });
+    }); //then end
   })
 }
 if(getLform){getLform.addEventListener('submit', ()=>{
