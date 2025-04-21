@@ -175,6 +175,22 @@ a{
 a{
     text-decoration: none;
 }
+.card-btn{
+    width: 30%;
+    border-radius: 5px;
+    color: aliceblue;
+    border: none;
+    padding: 5px;
+    background-image: linear-gradient(to bottom left,#0BCDDF,#F600FE);
+}
+.card-btn:active{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
+}
+.card-btn:hover{
+    color: black;
+    background-image: linear-gradient(to top right,#0BCDDF,#F600FE);
+}
 @media screen and (max-width:320px){
     #sformouter{
         width: 250px;

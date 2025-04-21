@@ -27,59 +27,59 @@ let getSclose=document.querySelector('.sclose')
   const auth = getAuth(app);
   const db = getFirestore(app);
   localStorage.setItem('a',6)
-  onAuthStateChanged(auth,async (user) => {
-    if(localStorage.getItem('a')){
-      let A=false
-    let C=false
-    let At
-    let Ct
-    if (user) {
-      if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
-        const querySnapshot = await getDocs(collection(db, "admin"));
-querySnapshot.forEach((doc) => {
-  if(user.email==doc.data().email){
-    A=true
-    At=doc.data().time.seconds
-  }
-});
-const query = await getDocs(collection(db, "customer"));
-query.forEach((doc) => {
-  if(user.email==doc.data().email){
-    C=true
-    Ct=doc.data().time.seconds
-  }
-});
-if(A==false && C==true){
-  if(!(location.pathname.endsWith('/customerDash.html'))){
-    location.href='./customerDash.html'
-  }
-}
-else if(A==true && C==false){
-  if(!(location.pathname.endsWith('/adminDash.html'))){
-  location.href='./adminDash.html'
-  }
-}
-else if(A==true && C==true){  
-  if(At>Ct){
-    if(!(location.pathname.endsWith('/adminDash.html'))){
-      location.href='./adminDash.html'
-    }
-  }
-  else if(Ct>At){
-    if(!(location.pathname.endsWith('/customerDash.html'))){
-      location.href='./customerDash.html'
-    }
-  }
-}
-      }
-      const uid = user.uid;
-    } else {
-      if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
-        location.href='./index.html'
-      }
-    }
-    }
-  });
+//   onAuthStateChanged(auth,async (user) => {
+//     if(localStorage.getItem('a')){
+//       let A=false
+//     let C=false
+//     let At
+//     let Ct
+//     if (user) {
+//       if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+//         const querySnapshot = await getDocs(collection(db, "admin"));
+// querySnapshot.forEach((doc) => {
+//   if(user.email==doc.data().email){
+//     A=true
+//     At=doc.data().time.seconds
+//   }
+// });
+// const query = await getDocs(collection(db, "customer"));
+// query.forEach((doc) => {
+//   if(user.email==doc.data().email){
+//     C=true
+//     Ct=doc.data().time.seconds
+//   }
+// });
+// if(A==false && C==true){
+//   if(!(location.pathname.endsWith('/customerDash.html'))){
+//     location.href='./customerDash.html'
+//   }
+// }
+// else if(A==true && C==false){
+//   if(!(location.pathname.endsWith('/adminDash.html'))){
+//   location.href='./adminDash.html'
+//   }
+// }
+// else if(A==true && C==true){  
+//   if(At>Ct){
+//     if(!(location.pathname.endsWith('/adminDash.html'))){
+//       location.href='./adminDash.html'
+//     }
+//   }
+//   else if(Ct>At){
+//     if(!(location.pathname.endsWith('/customerDash.html'))){
+//       location.href='./customerDash.html'
+//     }
+//   }
+// }
+//       }
+//       const uid = user.uid;
+//     } else {
+//       if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+//         location.href='./index.html'
+//       }
+//     }
+//     }
+//   });
   if(getSform){
     getSopen.addEventListener('click',()=>{
       getSclose.style.display='block'
@@ -117,7 +117,6 @@ if(flag){
   });
 }else{ //else start
   try {//try start
-    // flag=false
     const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
   if(getSemail.value==doc.data().email){
@@ -185,11 +184,10 @@ if(!flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(async ()=>{//ye nahi chala
+    }).then(async ()=>{
       const { value: rname } = await Swal.fire({
         title: "Restaurant Name",
         input: "text",
-        // inputLabel: "Your restaurant name",
         inputPlaceholder: "Enter your restaurant name"
       });
       if (rname) {
@@ -247,7 +245,6 @@ if(flag){
   });
 }else{
   try {
-    // flag=false
     const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
   if(getSemail.value==doc.data().email){
@@ -301,7 +298,7 @@ if(!flag){
       draggable: true,
       allowOutsideClick:false,
       allowEscapeKey:false,
-    }).then(async (data)=>{//ye nahi chala
+    }).then(async (data)=>{
         const docRef = await addDoc(collection(db, "customer"), {
           email: getSemail.value,
           time:Timestamp.now(),
@@ -333,9 +330,6 @@ if(!flag){
   }
 }
       }
-      // getSname.value=''
-      // getSemail.value=''
-      // getSpassword.value=''
     }); //then end
   })
 }
@@ -501,16 +495,23 @@ if(getLout){
     let getItemPrice=document.getElementById('itemprice')
     let getItemDescription=document.getElementById('itemdescription')
     let getItemImage=document.getElementById('itemimage')
+    let getItemCategory=document.getElementById('itemcategory')
     let file=getItemImage.files[0]
     let reader=new FileReader()
     reader.addEventListener('load', async ()=>{
+      let sel
+            Array.from(getItemCategory.childNodes).forEach(cv=>{
+              if(cv.selected){
+                sel=cv
+              }
+            })
       try {
         const docRef = await addDoc(collection(db, "items"), {
           name: getItemName.value,
           price:getItemPrice.value,
           description:getItemDescription.value,
+          category:sel.innerHTML,
           url:reader.result,
-          // time:Timestamp.now(),
         });
         console.log("Document written with ID: ", docRef.id);
       } catch (e) {
@@ -520,18 +521,8 @@ if(getLout){
       getItemPrice.value=''
       getItemDescription.value=''
       getItemImage.value=''
+      getItemCategory.selectedIndex = 0
       readData()
-    //   getAdminContainer.innerHTML+=`<div class="col">
-    //   <div class="card">
-    //     <img src="${reader.result}" class="card-img-top" alt="...">
-    //     <div class="card-body">
-    //       <h5 class="card-title">${getItemName.value}</h5>
-    //       <p class="card-text">${getItemPrice.value} Rs</p>
-    //       <p class="card-text">${getItemDescription.value}</p>
-    //       <p class="card-text d-flex justify-content-evenly"><button class="btn btn-danger w-25">Delete</button><button class="btn btn-primary w-25">Edit</button></p>
-    //     </div>
-    //   </div>
-    // </div>`
     })
     reader.readAsDataURL(file)
   })
@@ -541,17 +532,27 @@ if(getLout){
     const querySnapshot = await getDocs(collection(db, "items"));
   querySnapshot.forEach((doc) => {
     flag=true
-    getAdminContainer.innerHTML+=`<div class="col">
-      <div class="card">
-        <img src="${doc.data().url}" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">${doc.data().name}</h5>
-          <p class="card-text">${doc.data().price} Rs</p>
-          <p class="card-text">${doc.data().description}</p>
-          <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="btn btn-danger w-25 bttnsdel">Delete</button><button value='${doc.id}' class="btn btn-primary w-25 bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
-        </div>
-      </div>
-    </div>`
+    // getAdminContainer.innerHTML+=`<div class="col">
+    //   <div class="card">
+    //     <img src="${doc.data().url}" class="card-img-top" alt="...">
+    //     <div class="card-body">
+    //       <h5 class="card-title">${doc.data().name}</h5>
+    //       <p class="card-text">${doc.data().price} Rs</p>
+    //       <p class="card-text">${doc.data().description}</p>
+    //       <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="btn btn-danger w-25 bttnsdel">Delete</button><button value='${doc.id}' class="btn btn-primary w-25 bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
+    //     </div>
+    //   </div>
+    // </div>`
+    getAdminContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;">
+  <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
+  <div class="card-body">
+    <h5 class="card-title">${doc.data().name}</h5>
+           <p class="card-text">Rs ${doc.data().price}</p>
+           <p class="card-text">${doc.data().category}</p>
+           <p class="card-text">${doc.data().description}</p>
+           <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Delete</button><button value='${doc.id}' class="card-btn bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
+  </div>
+</div>`
   });
   if(flag){
     let getBttnsDel=document.querySelectorAll('.bttnsdel')
@@ -568,13 +569,21 @@ if(getLout){
         let getEditPrice=document.getElementById('itemeditprice')
         let getEditDescription=document.getElementById('itemeditdescription')
         let getEditImage=document.getElementById('itemeditimage')
+        let getEditCategory=document.getElementById('itemeditcategory')
         getEditForm.addEventListener('submit',()=>{
           let file=getEditImage.files[0]
           let reader=new FileReader()
           reader.addEventListener('load',async ()=>{
+            let sel
+            Array.from(getEditCategory.childNodes).forEach(cv=>{
+              if(cv.selected){
+                sel=cv
+              }
+            })
             await updateDoc(cityRef, {
               name: getEditName.value,
               price:getEditPrice.value,
+              category:sel.innerHTML,
               description:getEditDescription.value,
               url:reader.result,
               });
@@ -582,6 +591,7 @@ if(getLout){
               getEditPrice.value=''
               getEditDescription.value=''
               getEditImage.value=''
+              getEditCategory.selectedIndex=0
                 readData()
           })
           reader.readAsDataURL(file)
