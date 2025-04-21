@@ -6,6 +6,19 @@
     justify-content: center;
     align-items: center;
 }
+#adminbody,#customerbody{
+    background-image: linear-gradient(to bottom left,#0BCDDF,#F600FE);
+    width: 100%;
+    min-height: 100vh;
+}
+#elementP{
+    margin-left: 5px;
+    margin-bottom: 50px;
+}
+#element,.cursor{
+    font-size: 30px;
+    color: whitesmoke;
+}
 #sformouter{
     width: 300px;
     height: 200px;

@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
-<body>
-    <h1 class="text-center">Admin's Page</h1>
-    <div class="d-flex justify-content-end align-items-center p-2 gap-2"><button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+<body id="adminbody">
+    <h1 class="text-center text-light">Admin's Page</h1>
+    <div class="d-flex justify-content-end align-items-center p-2 gap-2"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Add Item
-      </button><button class="btn btn-outline-danger" id="lout">Logout</button></div>
+      </button><button class="btn btn-danger" id="lout">Logout</button></div>
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
@@ -67,10 +67,13 @@
       </div>
     </div>
   </div>
+  <p id="elementP">  <span id="element"></span>
+  </p>
   <div id="admincontainer" class="d-flex flex-wrap justify-content-evenly">
   </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>

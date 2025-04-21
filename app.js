@@ -9,7 +9,13 @@
   let getLpassword=document.getElementById('lpassword')
   let getLform=document.getElementById('lform')
   let getLout=document.getElementById('lout')
+  let getCustomerBody=document.getElementById('customerbody')
   let getLopen=document.querySelector('.lopen')
+  let getAdminBody=document.getElementById('adminbody')
+  let getCustomerContainer=document.getElementById('customercontainer')
+  let customerRead
+  let id
+  let readData
 let getLclose=document.querySelector('.lclose')
 let getSopen=document.querySelector('.sopen')
 let getSclose=document.querySelector('.sclose')
@@ -27,59 +33,65 @@ let getSclose=document.querySelector('.sclose')
   const auth = getAuth(app);
   const db = getFirestore(app);
   localStorage.setItem('a',6)
-//   onAuthStateChanged(auth,async (user) => {
-//     if(localStorage.getItem('a')){
-//       let A=false
-//     let C=false
-//     let At
-//     let Ct
-//     if (user) {
-//       if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
-//         const querySnapshot = await getDocs(collection(db, "admin"));
-// querySnapshot.forEach((doc) => {
-//   if(user.email==doc.data().email){
-//     A=true
-//     At=doc.data().time.seconds
-//   }
-// });
-// const query = await getDocs(collection(db, "customer"));
-// query.forEach((doc) => {
-//   if(user.email==doc.data().email){
-//     C=true
-//     Ct=doc.data().time.seconds
-//   }
-// });
-// if(A==false && C==true){
-//   if(!(location.pathname.endsWith('/customerDash.html'))){
-//     location.href='./customerDash.html'
-//   }
-// }
-// else if(A==true && C==false){
-//   if(!(location.pathname.endsWith('/adminDash.html'))){
-//   location.href='./adminDash.html'
-//   }
-// }
-// else if(A==true && C==true){  
-//   if(At>Ct){
-//     if(!(location.pathname.endsWith('/adminDash.html'))){
-//       location.href='./adminDash.html'
-//     }
-//   }
-//   else if(Ct>At){
-//     if(!(location.pathname.endsWith('/customerDash.html'))){
-//       location.href='./customerDash.html'
-//     }
-//   }
-// }
-//       }
-//       const uid = user.uid;
-//     } else {
-//       if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
-//         location.href='./index.html'
-//       }
-//     }
-//     }
-//   });
+  onAuthStateChanged(auth,async (user) => {
+    if(localStorage.getItem('a')){
+      let A=false
+    let C=false
+    let At
+    let Ct
+    if (user) {
+      if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+        const querySnapshot = await getDocs(collection(db, "admin"));
+querySnapshot.forEach((doc) => {
+  if(user.email==doc.data().email){
+    A=true
+    At=doc.data().time.seconds
+  }
+});
+const query = await getDocs(collection(db, "customer"));
+query.forEach((doc) => {
+  if(user.email==doc.data().email){
+    C=true
+    Ct=doc.data().time.seconds
+  }
+});
+if(A==false && C==true){
+  if(!(location.pathname.endsWith('/customerDash.html'))){
+    location.href='./customerDash.html'
+  }
+}
+else if(A==true && C==false){
+  if(!(location.pathname.endsWith('/adminDash.html'))){
+  location.href='./adminDash.html'
+  }
+}
+else if(A==true && C==true){  
+  if(At>Ct){
+    if(!(location.pathname.endsWith('/adminDash.html'))){
+      location.href='./adminDash.html'
+    }
+  }
+  else if(Ct>At){
+    if(!(location.pathname.endsWith('/customerDash.html'))){
+      location.href='./customerDash.html'
+    }
+  }
+}
+      }
+      const uid = user.uid;
+      id=uid
+      if(location.pathname.endsWith('/adminDash.html')){
+        readData()
+      }else{
+        customerRead()
+      }
+    } else {
+      if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+        location.href='./index.html'
+      }
+    }
+    }
+  });
   if(getSform){
     getSopen.addEventListener('click',()=>{
       getSclose.style.display='block'
@@ -137,7 +149,6 @@ if(!flag){
       const { value: rname } = await Swal.fire({
         title: "Restaurant Name",
         input: "text",
-        // inputLabel: "Your restaurant name",
         inputPlaceholder: "Enter your restaurant name"
       });
       if (rname) {
@@ -469,11 +480,30 @@ await updateDoc(cityRef, {
   });
 })
 }
-if(getLout){
+if(getAdminBody){
+  const typed=new Typed('#element',{
+    strings:["Welcome to Admin's Panel",'Add your dishes to serve'],
+    typeSpeed:50,
+    fadeOut:true,
+    backDelay:1000,
+    startDelay:3000,
+    loop:false,
+    cursorChar:'<span class="cursor">_</span>',
+  })
   getLout.addEventListener('click',()=>{
     localStorage.clear()
     signOut(auth).then(()=>{
       Swal.fire({
+        title: "Do you want to logout?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+        allowOutsideClick:false,
+        allowEscapeKey:false,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          Swal.fire({
         title: `You signedout`,
         icon: "success",
         draggable: true,
@@ -482,6 +512,10 @@ if(getLout){
       }).then(()=>{
         location.href='./index.html'
       })
+        } else if (result.isDenied) {
+          Swal.fire("Didn't logout", "", "info");
+        }
+      });
     }).catch(()=>{
       Swal.fire({
         icon: "error",
@@ -506,7 +540,7 @@ if(getLout){
               }
             })
       try {
-        const docRef = await addDoc(collection(db, "items"), {
+        const docRef = await addDoc(collection(db, `${id}`), {
           name: getItemName.value,
           price:getItemPrice.value,
           description:getItemDescription.value,
@@ -514,6 +548,17 @@ if(getLout){
           url:reader.result,
         });
         console.log("Document written with ID: ", docRef.id);
+        //j
+        try {
+          const docRef = await addDoc(collection(db, 'customerPanel'), {
+            cd: id,
+          });
+          console.log("Document written with ID: ", docRef.id);
+          
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+        //j
       } catch (e) {
         console.error("Error adding document: ", e);
       }
@@ -526,31 +571,21 @@ if(getLout){
     })
     reader.readAsDataURL(file)
   })
-  async function readData(){
+  readData=async function(){
+    
     getAdminContainer.innerHTML=''
     let flag=false
-    const querySnapshot = await getDocs(collection(db, "items"));
+    const querySnapshot = await getDocs(collection(db, `${id}`));
   querySnapshot.forEach((doc) => {
     flag=true
-    // getAdminContainer.innerHTML+=`<div class="col">
-    //   <div class="card">
-    //     <img src="${doc.data().url}" class="card-img-top" alt="...">
-    //     <div class="card-body">
-    //       <h5 class="card-title">${doc.data().name}</h5>
-    //       <p class="card-text">${doc.data().price} Rs</p>
-    //       <p class="card-text">${doc.data().description}</p>
-    //       <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="btn btn-danger w-25 bttnsdel">Delete</button><button value='${doc.id}' class="btn btn-primary w-25 bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
-    //     </div>
-    //   </div>
-    // </div>`
     getAdminContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;">
   <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
   <div class="card-body">
     <h5 class="card-title">${doc.data().name}</h5>
-           <p class="card-text">Rs ${doc.data().price}</p>
-           <p class="card-text">${doc.data().category}</p>
-           <p class="card-text">${doc.data().description}</p>
-           <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Delete</button><button value='${doc.id}' class="card-btn bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
+           <div class="card-text">Rs ${doc.data().price}</div>
+           <div class="card-text">${doc.data().category}</div>
+           <div class="card-text">${doc.data().description}</div>
+           <div class="card-text mt-2 d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Delete</button><button value='${doc.id}' class="card-btn bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></div>
   </div>
 </div>`
   });
@@ -558,12 +593,33 @@ if(getLout){
     let getBttnsDel=document.querySelectorAll('.bttnsdel')
     let getBttnsEdit=document.querySelectorAll('.bttnsedit')
     Array.from(getBttnsDel).forEach((cv,ci)=>{
-      cv.addEventListener('click',async (e)=>{
-        await deleteDoc(doc(db, "items", e.srcElement.value));
-        readData()
+      cv.addEventListener('click',(e)=>{
+        Swal.fire({
+          title: "Do you want to delete?",
+          showDenyButton: true,
+          confirmButtonText: "Yes",
+          denyButtonText: `No`,
+          allowOutsideClick:false,
+          allowEscapeKey:false,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await deleteDoc(doc(db, `${id}`, e.srcElement.value));
+            Swal.fire({
+          title: `Deleted`,
+          icon: "success",
+          draggable: true,
+          allowOutsideClick:false,
+          allowEscapeKey:false,
+        }).then(()=>{
+          readData()
+        })
+          } else if (result.isDenied) {
+            Swal.fire("Didn't delete", "", "info");
+          }
+        });
       })
       getBttnsEdit[ci].addEventListener('click',(e)=>{
-        const cityRef = doc(db, 'items', e.srcElement.value);
+        const cityRef = doc(db, `${id}`, e.srcElement.value);
         let getEditForm=document.getElementById('itemeditform')
         let getEditName=document.getElementById('itemeditname')
         let getEditPrice=document.getElementById('itemeditprice')
@@ -600,5 +656,60 @@ if(getLout){
     })
   }
   }
-  readData()
+  // readData()
+}
+if(getCustomerBody){
+  getLout.addEventListener('click',()=>{
+    localStorage.clear()
+    signOut(auth).then(()=>{
+      Swal.fire({
+        title: "Do you want to logout?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+        allowOutsideClick:false,
+        allowEscapeKey:false,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          Swal.fire({
+        title: `You signedout`,
+        icon: "success",
+        draggable: true,
+        allowOutsideClick:false,
+        allowEscapeKey:false,
+      }).then(()=>{
+        location.href='./index.html'
+      })
+        } else if (result.isDenied) {
+          Swal.fire("Didn't logout", "", "info");
+        }
+      });
+    }).catch(()=>{
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.code+' '+error.message,
+      });
+    })
+  })
+  customerRead=async function(){
+    getCustomerContainer.innerHTML=''
+    const querySnapshot = await getDocs(collection(db, "customerPanel"));
+querySnapshot.forEach(async (doc) => {
+  const querySnapshot = await getDocs(collection(db, `${doc.data().cd}`));
+  querySnapshot.forEach(async (doc) => {
+    getCustomerContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;">
+  <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
+  <div class="card-body">
+    <h5 class="card-title">${doc.data().name}</h5>
+           <div class="card-text">Rs ${doc.data().price}</div>
+           <div class="card-text">${doc.data().category}</div>
+           <div class="card-text">${doc.data().description}</div>
+           <div class="card-text mt-2 d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Order</button></div>
+  </div>
+</div>`
+  })
+});
+  }
 }
