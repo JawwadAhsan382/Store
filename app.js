@@ -118,7 +118,8 @@ else if(A==true && C==true){
       id=uid
       if(location.pathname.endsWith('/adminDash.html')){
         readData()
-      }else{
+      }
+      if(location.pathname.endsWith('/customerDash.html')){
         customerRead()
       }
     } else {
@@ -681,9 +682,17 @@ if(getAdminBody){
     })
   }
   }
-  // readData()
 }
 if(getCustomerBody){
+  const typed=new Typed('#elemen',{
+    strings:["Welcome dear user",'Delicious food near your town','Order now'],
+    typeSpeed:50,
+    fadeOut:true,
+    backDelay:1000,
+    startDelay:3000,
+    loop:false,
+    cursorChar:'<span class="cursor">_</span>',
+  })
   getLout.addEventListener('click',()=>{
     localStorage.clear()
     signOut(auth).then(()=>{
