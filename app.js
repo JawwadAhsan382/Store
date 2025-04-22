@@ -16,11 +16,14 @@
   let customerRead
   let id
   let readData
+  let getPill=document.getElementById('pill')
 let getLclose=document.querySelector('.lclose')
 let getSopen=document.querySelector('.sopen')
 let getSclose=document.querySelector('.sclose')
   let getItemForm=document.getElementById('itemform')
   let getAdminContainer=document.getElementById('admincontainer')
+  let getBttnsOrder
+  let getBill=document.getElementById('bill')
   const firebaseConfig = {
     apiKey: "AIzaSyAx7z2MAurEV3enbiCqL4-qvi-apefG0Ho",
     authDomain: "store-694a5.firebaseapp.com",
@@ -35,6 +38,7 @@ let getSclose=document.querySelector('.sclose')
   localStorage.setItem('a',6)
   onAuthStateChanged(auth,async (user) => {
     if(localStorage.getItem('a')){
+      let flag=true
       let A=false
     let C=false
     let At
@@ -61,12 +65,44 @@ if(A==false && C==true){
   }
 }
 else if(A==true && C==false){
+  const que = await getDocs(collection(db, "customerPanel"));
+que.forEach((doc) => {
+  if(user.uid==doc.data().cd){
+    flag=false
+  }
+});
+if(flag){
+  try {
+    const docRef = await addDoc(collection(db, "customerPanel"), {
+      cd:`${user.uid}`
+    });
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
   if(!(location.pathname.endsWith('/adminDash.html'))){
   location.href='./adminDash.html'
   }
 }
 else if(A==true && C==true){  
   if(At>Ct){
+    const que = await getDocs(collection(db, "customerPanel"));
+    que.forEach((doc) => {
+      if(user.uid==doc.data().cd){
+        flag=false
+      }
+    });
+    if(flag){
+      try {
+        const docRef = await addDoc(collection(db, "customerPanel"), {
+          cd:`${user.uid}`
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    }
     if(!(location.pathname.endsWith('/adminDash.html'))){
       location.href='./adminDash.html'
     }
@@ -117,7 +153,7 @@ else if(A==true && C==true){
         let flag=false
         const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-  if(getSemail.value==doc.data().email){
+  if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
     flag=true
   }
 });
@@ -125,13 +161,13 @@ if(flag){
   Swal.fire({
     icon: "error",
     title: "Oops...",
-    text: `${getSemail.value} exist as admin`,
+    text: `${getSemail.value.toLowerCase()} exist as admin`,
   });
 }else{ //else start
   try {//try start
     const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-  if(getSemail.value==doc.data().email){
+  if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
     flag=true
   }
 });
@@ -162,7 +198,7 @@ if(!flag){
         name:getSname.value,
         restaurant:rname,
         time:Timestamp.now(),
-        email: getSemail.value,
+        email: getSemail.value.toLowerCase(),
       });
       console.log("Document written with ID: ", docRef.id);
       getSname.value=''
@@ -212,7 +248,7 @@ if(!flag){
         name:getSname.value,
         time:Timestamp.now(),
         restaurant:rname,
-        email: getSemail.value,
+        email: getSemail.value.toLowerCase(),
       });
       getSname.value=''
       getSemail.value=''
@@ -244,7 +280,7 @@ if(!flag){
         let flag=false
         const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-  if(getSemail.value==doc.data().email){
+  if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
     flag=true
   }
 });
@@ -252,13 +288,13 @@ if(flag){
   Swal.fire({
     icon: "error",
     title: "Oops...",
-    text: `${getSemail.value} exist as customer`,
+    text: `${getSemail.value.toLowerCase()} exist as customer`,
   });
 }else{
   try {
     const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-  if(getSemail.value==doc.data().email){
+  if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
     flag=true
   }
 });
@@ -274,7 +310,7 @@ if(!flag){
       allowEscapeKey:false,
     }).then(async ()=>{
       const docRef = await addDoc(collection(db, "customer"), {
-        email: getSemail.value,
+        email: getSemail.value.toLowerCase(),
         name:getSname.value,
         time:Timestamp.now(),
       });
@@ -311,7 +347,7 @@ if(!flag){
       allowEscapeKey:false,
     }).then(async (data)=>{
         const docRef = await addDoc(collection(db, "customer"), {
-          email: getSemail.value,
+          email: getSemail.value.toLowerCase(),
           time:Timestamp.now(),
           name:getSname.value,
         });
@@ -369,7 +405,7 @@ getLclose.addEventListener('click',()=>{
       let flag=false
       const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-if(getLemail.value==doc.data().email){
+if(getLemail.value.toLowerCase()==doc.data().email.toLowerCase()){
   flag=true
 }
 });
@@ -389,7 +425,7 @@ if(flag){
       let Bj
       const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach(async (doc) => {
-  if(user.email==doc.data().email){
+  if(user.email==doc.data().email.toLowerCase()){
     flag=true
     Bj=doc.id
   }
@@ -416,7 +452,7 @@ time: Timestamp.now()
   Swal.fire({
     icon: "error",
     title: "Oops...",
-    text: `${getLemail} does'nt exist as admin`,
+    text: `${getLemail.value.toLowerCase()} does'nt exist as admin`,
   });
 }
     } 
@@ -424,7 +460,7 @@ time: Timestamp.now()
       let flag=false
       const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-if(getLemail.value==doc.data().email){
+if(getLemail.value.toLowerCase()==doc.data().email.toLowerCase()){
 flag=true
 }
 });
@@ -444,7 +480,7 @@ if(flag){
       let Bj
       const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach(async (doc) => {
-  if(user.email==doc.data().email){
+  if(user.email==doc.data().email.toLowerCase()){
     flag=true
     Bj=doc.id
   }
@@ -471,7 +507,7 @@ await updateDoc(cityRef, {
   Swal.fire({
     icon: "error",
     title: "Oops...",
-    text: `${getLemail} does'nt exist as customer`,
+    text: `${getLemail.toLowerCase()} does'nt exist as customer`,
   });
 }
     }
@@ -548,17 +584,6 @@ if(getAdminBody){
           url:reader.result,
         });
         console.log("Document written with ID: ", docRef.id);
-        //j
-        try {
-          const docRef = await addDoc(collection(db, 'customerPanel'), {
-            cd: id,
-          });
-          console.log("Document written with ID: ", docRef.id);
-          
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-        //j
       } catch (e) {
         console.error("Error adding document: ", e);
       }
@@ -698,18 +723,55 @@ if(getCustomerBody){
     const querySnapshot = await getDocs(collection(db, "customerPanel"));
 querySnapshot.forEach(async (doc) => {
   const querySnapshot = await getDocs(collection(db, `${doc.data().cd}`));
-  querySnapshot.forEach(async (doc) => {
-    getCustomerContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;">
-  <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
-  <div class="card-body">
-    <h5 class="card-title">${doc.data().name}</h5>
-           <div class="card-text">Rs ${doc.data().price}</div>
-           <div class="card-text">${doc.data().category}</div>
-           <div class="card-text">${doc.data().description}</div>
-           <div class="card-text mt-2 d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Order</button></div>
-  </div>
-</div>`
+  let n=0
+  querySnapshot.forEach((doc) => {
+    getCustomerContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;"><img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;"><div class="card-body"><h5 class="card-title">${doc.data().name}</h5><div class="card-text">Rs <span>${doc.data().price}</span></div><div class="card-text">${doc.data().category}</div><div class="card-text">${doc.data().description}</div><div class="card-text mt-2 d-flex justify-content-evenly"><button value='${n}' class="card-btn bttnsOrder" onclick="addToCart(this)">Order</button></div></div></div>`
+    getBttnsOrder=document.querySelectorAll('.bttnsOrder')
+    // <div class="card my-2" style="width: 16rem;">
+    //   <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
+    //   <div class="card-body">
+    //     <h5 class="card-title">${doc.data().name}</h5>
+    //     <div class="card-text">Rs ${doc.data().price}</div>
+    //     <div class="card-text">${doc.data().category}</div>
+    //     <div class="card-text">${doc.data().description}</div>
+    //     <div class="card-text mt-2 d-flex justify-content-evenly">
+    //       <button value='${n}' class="card-btn bttnsOrder" onclick="addToCart(this)">Order</button>
+    //     </div>
+    //   </div>
+    // </div>
+n++
   })
 });
   }
+  let getCart=document.getElementById('cart')
+  if(Number(getPill.firstChild.textContent)==0){
+    getPill.style.display='none'
+  }
+  function addToCart(e){
+    getPill.style.display='inline'
+    getPill.firstChild.textContent=Number(getPill.firstChild.textContent)+1
+    let a=e.parentNode.parentNode.parentNode.cloneNode(true)
+    a.lastChild.lastChild.firstChild.innerText='Cancel'
+    a.lastChild.lastChild.firstChild.setAttribute('onclick','removeFromCart(this)')
+    e.disabled=true
+    e.style.opacity=0.5
+    getCart.innerHTML+=`<div class="card my-2" style="width: 16rem;">${a.innerHTML}</div>`
+    getBill.innerText=Number(getBill.innerText)+Number(a.firstChild.nextSibling.firstChild.nextSibling.firstChild.nextSibling.innerText)
+  }
+  window.addToCart=addToCart
+  function removeFromCart(e){
+    Array.from(getBttnsOrder).forEach(cv=>{
+      if(cv.value==e.value){
+        cv.disabled=false
+    cv.style.opacity=1
+      }
+    })
+    getBill.innerText=Number(getBill.innerText)-Number(e.parentNode.parentNode.firstChild.nextSibling.firstChild.nextSibling.innerText)
+    e.parentNode.parentNode.parentNode.remove()
+    getPill.firstChild.textContent=Number(getPill.firstChild.textContent)-1
+    if(Number(getPill.firstChild.textContent)==0){
+      getPill.style.display='none'
+    }
+  }
+  window.removeFromCart=removeFromCart
 }

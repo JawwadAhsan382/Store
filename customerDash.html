@@ -10,20 +10,23 @@
 </head>
 <body id="customerbody">
     <h1 class="text-center text-light">Customer's Page</h1>
-    <div class="d-flex justify-content-end align-items-center p-2 gap-2"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Cart
+    <div class="d-flex justify-content-end align-items-center p-2 gap-2"><button type="button" class="btn btn-success position-relative me-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="pill">0<span class="visually-hidden">unread messages</span>
+      </span>
       </button><button class="btn btn-danger" id="lout">Logout</button></div>
   <!-- Modal -->
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Your Orders</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Your Bill : Rs <span id="bill">0</span></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          ...
+        <div class="modal-header">
+          <h5 class="modal-title">Your Orders</h5>
         </div>
+        <div class="modal-body d-flex flex-column align-items-center" id="cart"></div>
       </div>
     </div>
   </div>
