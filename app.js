@@ -511,7 +511,7 @@ await updateDoc(cityRef, {
   Swal.fire({
     icon: "error",
     title: "Oops...",
-    text: `${getLemail.toLowerCase()} does'nt exist as customer`,
+    text: `${getLemail.value.toLowerCase()} does'nt exist as customer`,
   });
 }
     }
@@ -722,7 +722,7 @@ querySnapshot.forEach((doc) => {
 }
 if(getCustomerBody){
   let L
-  let tempVar
+  let tempVar=document.querySelector('.tempvar')
   let getFilterResult=document.querySelector('.filterresult')
   let getfilterResultPanel=document.getElementById('filterresultpanel')
   let getCross=document.getElementById('crossbtn')
@@ -795,19 +795,17 @@ if(getCustomerBody){
   })
   customerRead=async function(){
     getCustomerContainer.innerHTML=''
+    let n=0
     const querySnapshot = await getDocs(collection(db, "customerPanel"));
 querySnapshot.forEach(async (doc) => {
   const querySnapshot = await getDocs(collection(db, `${doc.data().cd}`));
-  let n=0
   querySnapshot.forEach((doc) => {
     getCustomerContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;"><img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;"><div class="card-body"><h5 class="card-title">${doc.data().name}</h5><div class="card-text">Rs <span>${doc.data().price}</span></div><div class="card-text">${doc.data().category}</div><div class="card-text">${doc.data().description}</div><div class="card-text mt-2 d-flex justify-content-evenly"><button value='${n}' class="card-btn bttnsOrder" onclick="addToCart(this)">Order</button></div></div></div>`
     getBttnsOrder=document.querySelectorAll('.bttnsOrder')
 n++
   })
   L=getCustomerContainer.childNodes.length
-tempVar=document.querySelector('.tempvar')
 });
-
   }
   let getCart=document.getElementById('cart')
   if(Number(getPill.firstChild.textContent)==0){
