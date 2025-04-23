@@ -230,6 +230,10 @@ a{
     font-size: 30px;
     color: aliceblue !important;
 }
+.navbar-brand:hover{
+    color: #F600FE !important;
+    transition: 1s;
+}
 .filter,.fa-xmark{
     font-weight: bolder;
     font-size: 30px;
