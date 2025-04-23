@@ -727,8 +727,9 @@ if(getCustomerBody){
   let getfilterResultPanel=document.getElementById('filterresultpanel')
   let getCross=document.getElementById('crossbtn')
   getCross.addEventListener('click',()=>{
-    getfilterResultPanel.style.display='none'
-    getCustomerContainer.innerHTML=tempVar.innerHTML
+    // getfilterResultPanel.style.display='none'
+    // getCustomerContainer.innerHTML=tempVar.innerHTML
+    location.reload()
   })
   getSearchForm.addEventListener('submit',()=>{
     if(getCustomerContainer.innerHTML=='' || getCustomerContainer.childNodes.length!=L){
@@ -740,6 +741,7 @@ if(getCustomerBody){
     })
     getFilterResult.innerText=abc.length
     getfilterResultPanel.style.display='flex'
+    tempVar.innerHTML=getCustomerContainer.innerHTML
     if(abc.length){
       getCustomerContainer.innerHTML=''
       abc.forEach(cv=>{
@@ -804,7 +806,6 @@ n++
   })
   L=getCustomerContainer.childNodes.length
 tempVar=document.querySelector('.tempvar')
-tempVar.innerHTML=getCustomerContainer.innerHTML
 });
 
   }
