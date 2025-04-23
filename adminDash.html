@@ -10,7 +10,7 @@
 </head>
 <body id="adminbody">
     <h1 class="text-center text-light">Admin's Page</h1>
-    <div class="d-flex justify-content-end align-items-center p-2 gap-2"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    <div class="d-flex justify-content-end align-items-center p-2 gap-2" ><button id="addbtn" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Add Item
       </button><button class="btn btn-danger" id="lout">Logout</button></div>
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -34,7 +34,7 @@
             </select>
             <textarea required name="" placeholder="Enter item description" class="w-75 form-control" id="itemdescription"></textarea>
             <input required type="file" class="w-75 form-control" name="" id="itemimage">
-            <button class="btn btn-info">Add</button>
+            <button class="btn btn-info" id="editbtn">Add</button>
           </form>
         </div>
       </div>
@@ -44,24 +44,17 @@
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Add Item</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Item</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form action="javascript:void(0)" class="form-control d-flex flex-column gap-3 align-items-center" id="itemeditform">
             <input required type="text" placeholder="Enter item name" class="w-75 form-control" name="" id="itemeditname">
             <input required type="number" placeholder="Enter item price" class="w-75 form-control" name="" id="itemeditprice">
-            <select class="form-select w-75" required id="itemeditcategory" aria-label="Default select example">
-              <option value="" selected disabled>Open this select menu</option>
-              <option value="1">Breakfast</option>
-              <option value="2">Lunch/Dinner</option>
-              <option value="3">Dessert</option>
-              <option value="4">Starters</option>
-              <option value="5">Beverages</option>
-            </select>
+            <select class="form-select w-75" required id="itemeditcategory" aria-label="Default select example"><option value="" selected disabled>Open this select menu</option><option value="1">Breakfast</option><option value="2">Lunch/Dinner</option><option value="3">Dessert</option><option value="4">Starters</option><option value="5">Beverages</option></select>
             <textarea required name="" placeholder="Enter item description" class="w-75 form-control" id="itemeditdescription"></textarea>
             <input required type="file" class="w-75 form-control" name="" id="itemeditimage">
-            <button class="btn btn-info">Add</button>
+            <button class="btn btn-info" id="editbtn">Add</button>
           </form>
         </div>
       </div>

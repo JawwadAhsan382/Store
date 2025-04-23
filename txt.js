@@ -2,14 +2,28 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebas
 import { getFirestore ,collection, addDoc,Timestamp, getDocs, doc, deleteDoc,updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { getAuth,createUserWithEmailAndPassword , signInWithEmailAndPassword ,onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 let getSemail=document.getElementById('semail')
+let getSname=document.getElementById('sname')
 let getSpassword=document.getElementById('spassword')
 let getSform=document.getElementById('sform')
 let getLemail=document.getElementById('lemail')
 let getLpassword=document.getElementById('lpassword')
 let getLform=document.getElementById('lform')
 let getLout=document.getElementById('lout')
+let getCustomerBody=document.getElementById('customerbody')
+let getLopen=document.querySelector('.lopen')
+let getAdminBody=document.getElementById('adminbody')
+let getCustomerContainer=document.getElementById('customercontainer')
+let customerRead
+let id
+let readData
+let getPill=document.getElementById('pill')
+let getLclose=document.querySelector('.lclose')
+let getSopen=document.querySelector('.sopen')
+let getSclose=document.querySelector('.sclose')
 let getItemForm=document.getElementById('itemform')
 let getAdminContainer=document.getElementById('admincontainer')
+let getBttnsOrder
+let getBill=document.getElementById('bill')
 const firebaseConfig = {
   apiKey: "AIzaSyAx7z2MAurEV3enbiCqL4-qvi-apefG0Ho",
   authDomain: "store-694a5.firebaseapp.com",
@@ -21,22 +35,112 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// onAuthStateChanged(auth, (user) => {
-//   if (user) {
-//     if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')){
-//       location.href='./adminDash.html'
-//     }
-//     const uid = user.uid;
-//     // ...
-//   } else {
-//     if(location.pathname.endsWith('/adminDash.html')){
-//       location.href='./index.html'
-//     }
-//     // User is signed out
-//     // ...
-//   }
-// });
-if(getSform){getSform.addEventListener('submit', ()=>{
+localStorage.setItem('a',6)
+onAuthStateChanged(auth,async (user) => {
+  if(localStorage.getItem('a')){
+    let flag=true
+    let A=false
+  let C=false
+  let At
+  let Ct
+  if (user) {
+    if(getSform||location.pathname.endsWith('/index.html')||location.pathname.endsWith('/login.html')||location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+      const querySnapshot = await getDocs(collection(db, "admin"));
+querySnapshot.forEach((doc) => {
+if(user.email==doc.data().email){
+  A=true
+  At=doc.data().time.seconds
+}
+});
+const query = await getDocs(collection(db, "customer"));
+query.forEach((doc) => {
+if(user.email==doc.data().email){
+  C=true
+  Ct=doc.data().time.seconds
+}
+});
+if(A==false && C==true){
+if(!(location.pathname.endsWith('/customerDash.html'))){
+  location.href='./customerDash.html'
+}
+}
+else if(A==true && C==false){
+const que = await getDocs(collection(db, "customerPanel"));
+que.forEach((doc) => {
+if(user.uid==doc.data().cd){
+  flag=false
+}
+});
+if(flag){
+try {
+  const docRef = await addDoc(collection(db, "customerPanel"), {
+    cd:`${user.uid}`
+  });
+  console.log("Document written with ID: ", docRef.id);
+} catch (e) {
+  console.error("Error adding document: ", e);
+}
+}
+if(!(location.pathname.endsWith('/adminDash.html'))){
+location.href='./adminDash.html'
+}
+}
+else if(A==true && C==true){  
+if(At>Ct){
+  const que = await getDocs(collection(db, "customerPanel"));
+  que.forEach((doc) => {
+    if(user.uid==doc.data().cd){
+      flag=false
+    }
+  });
+  if(flag){
+    try {
+      const docRef = await addDoc(collection(db, "customerPanel"), {
+        cd:`${user.uid}`
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+  if(!(location.pathname.endsWith('/adminDash.html'))){
+    location.href='./adminDash.html'
+  }
+}
+else if(Ct>At){
+  if(!(location.pathname.endsWith('/customerDash.html'))){
+    location.href='./customerDash.html'
+  }
+}
+}
+    }
+    const uid = user.uid;
+    id=uid
+    if(location.pathname.endsWith('/adminDash.html')){
+      readData()
+    }
+    if(location.pathname.endsWith('/customerDash.html')){
+      customerRead()
+    }
+  } else {
+    if(location.pathname.endsWith('/adminDash.html')||location.pathname.endsWith('/customerDash.html')){
+      location.href='./index.html'
+    }
+  }
+  }
+});
+if(getSform){
+  getSopen.addEventListener('click',()=>{
+    getSclose.style.display='block'
+    getSopen.style.display='none'
+    getSpassword.type='text'
+})
+getSclose.addEventListener('click',()=>{
+    getSclose.style.display='none'
+    getSopen.style.display='block'
+    getSpassword.type='password'
+})
+  getSform.addEventListener('submit', ()=>{
   Swal.fire({
     title: "How do you want to signup as?",
     showDenyButton: true,
@@ -45,12 +149,12 @@ if(getSform){getSform.addEventListener('submit', ()=>{
     draggable:false,
     confirmButtonText: "Admin",
     denyButtonText: "Customer"
-  }).then(async (result) => {
+  }).then(async (result) => {//then start
     if (result.isConfirmed) {
       let flag=false
       const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-if(getSemail.value==doc.data().email){
+if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
   flag=true
 }
 });
@@ -58,22 +162,17 @@ if(flag){
 Swal.fire({
   icon: "error",
   title: "Oops...",
-  text: `${getSemail.value} exist as admin`,
+  text: `${getSemail.value.toLowerCase()} exist as admin`,
 });
-}else{
-try {
-  flag=false
+}else{ //else start
+try {//try start
   const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-if(getSemail.value==doc.data().email){
+if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
   flag=true
 }
 });
 if(!flag){
-const docRef = await addDoc(collection(db, "admin"), {
-  email: getSemail.value,
-});
-console.log("Document written with ID: ", docRef.id);
 createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;
@@ -83,8 +182,34 @@ createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
-  }).then(()=>{
-    location.href='./adminDash.html'
+  }).then(async ()=>{
+    const { value: rname } = await Swal.fire({
+      title: "Restaurant Name",
+      input: "text",
+      inputPlaceholder: "Enter your restaurant name"
+    });
+    if (rname) {
+      Swal.fire({
+        title: "Restaurant added",
+        icon: "success",
+        draggable: false
+      });
+    }
+    const docRef = await addDoc(collection(db, "admin"), {
+      name:getSname.value,
+      restaurant:rname,
+      time:Timestamp.now(),
+      email: getSemail.value.toLowerCase(),
+    });
+    console.log("Document written with ID: ", docRef.id);
+    getSname.value=''
+    getSemail.value=''
+    getSpassword.value=''
+    signOut(auth).then(()=>{
+      location.href='./login.html'
+    }).catch(()=>{
+      console.log('Error 420');
+    })
   })
 })
 .catch((error) => {
@@ -97,21 +222,44 @@ createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   });
 });
 }else{
+localStorage.clear()
 signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;
   Swal.fire({
-    title: `${user.email} signup`,
+    title: `${user.email} signedup`,
     icon: "success",
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
   }).then(async ()=>{
-    const docRef = await addDoc(collection(db, "admin"), {
-      email: getSemail.value,
+    const { value: rname } = await Swal.fire({
+      title: "Restaurant Name",
+      input: "text",
+      inputPlaceholder: "Enter your restaurant name"
     });
+    if (rname) {
+      Swal.fire({
+        title: "Restaurant added",
+        icon: "success",
+        draggable: false
+      });
+    }
+    const docRef = await addDoc(collection(db, "admin"), {
+      name:getSname.value,
+      time:Timestamp.now(),
+      restaurant:rname,
+      email: getSemail.value.toLowerCase(),
+    });
+    getSname.value=''
+    getSemail.value=''
+    getSpassword.value=''
     console.log("Document written with ID: ", docRef.id);
-    location.href='./adminDash.html'
+    signOut(auth).then(()=>{        
+      location.href='./login.html'
+    }).catch(()=>{
+      console.log('Error 420');
+    })
   })
 })
 .catch((error) => {
@@ -124,16 +272,16 @@ signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
   });
 });
 }
-} catch (e) {
+} catch (e) {//try end or catch start
   console.error("Error adding document: ", e);
 }
-}
+} //else end
     } 
     else if (result.isDenied) {
       let flag=false
       const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-if(getSemail.value==doc.data().email){
+if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
   flag=true
 }
 });
@@ -141,22 +289,17 @@ if(flag){
 Swal.fire({
   icon: "error",
   title: "Oops...",
-  text: `${getSemail.value} exist as customer`,
+  text: `${getSemail.value.toLowerCase()} exist as customer`,
 });
 }else{
 try {
-  flag=false
   const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-if(getSemail.value==doc.data().email){
+if(getSemail.value.toLowerCase()==doc.data().email.toLowerCase()){
   flag=true
 }
 });
 if(!flag){
-const docRef = await addDoc(collection(db, "customer"), {
-  email: getSemail.value,
-});
-console.log("Document written with ID: ", docRef.id);
 createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;  
@@ -166,8 +309,21 @@ createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
-  }).then(()=>{
-    location.href='./customerDash.html'
+  }).then(async ()=>{
+    const docRef = await addDoc(collection(db, "customer"), {
+      email: getSemail.value.toLowerCase(),
+      name:getSname.value,
+      time:Timestamp.now(),
+    });
+    getSname.value=''
+    getSemail.value=''
+    getSpassword.value=''
+    console.log("Document written with ID: ", docRef.id);
+    signOut(auth).then(()=>{
+      location.href='./login.html'
+    }).catch(()=>{
+      console.log('Error 420');
+    })
   })
 })
 .catch((error) => {
@@ -179,22 +335,32 @@ createUserWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
     text: errorCode+' '+errorMessage,
   });
 });
-}else{
+}else{  
+localStorage.clear()
 signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;
   Swal.fire({
-    title: `${user.email} signup`,
+    title: `${user.email} signedup`,
     icon: "success",
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
-  }).then(async ()=>{
-    const docRef = await addDoc(collection(db, "customer"), {
-      email: getSemail.value,
-    });
-    console.log("Document written with ID: ", docRef.id);
-    location.href='./customerDash.html'
+  }).then(async (data)=>{
+      const docRef = await addDoc(collection(db, "customer"), {
+        email: getSemail.value.toLowerCase(),
+        time:Timestamp.now(),
+        name:getSname.value,
+      });
+      getSname.value=''
+      getSemail.value=''
+      getSpassword.value=''
+      console.log("Document written with ID: ", docRef.id);
+      signOut(auth).then(()=>{        
+        location.href='./login.html'
+      }).catch(()=>{
+        console.log('Error 420');
+      })
   })
 })
 .catch((error) => {
@@ -212,12 +378,21 @@ signInWithEmailAndPassword(auth, getSemail.value, getSpassword.value)
 }
 }
     }
-    getSemail.value=''
-    getSpassword.value=''
-  });
+  }); //then end
 })
 }
-if(getLform){getLform.addEventListener('submit', ()=>{
+if(getLform){
+getLopen.addEventListener('click',()=>{
+  getLclose.style.display='block'
+  getLopen.style.display='none'
+  getLpassword.type='text'
+})
+getLclose.addEventListener('click',()=>{
+  getLclose.style.display='none'
+  getLopen.style.display='block'
+  getLpassword.type='password'
+})
+getLform.addEventListener('submit', ()=>{
 Swal.fire({
   title: "How do you want to login as?",
   showDenyButton: true,
@@ -226,16 +401,17 @@ Swal.fire({
   draggable:false,
   confirmButtonText: "Admin",
   denyButtonText: "Customer"
-}).then(async (result) => {
+}).then(async (result) => {//then start
   if (result.isConfirmed) {
     let flag=false
     const querySnapshot = await getDocs(collection(db, "admin"));
 querySnapshot.forEach((doc) => {
-if(getLemail.value==doc.data().email){
+if(getLemail.value.toLowerCase()==doc.data().email.toLowerCase()){
 flag=true
 }
 });
 if(flag){
+localStorage.clear()
 signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;
@@ -245,7 +421,22 @@ signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
-  }).then(()=>{
+  }).then(async ()=>{
+    let flag=false
+    let Bj
+    const querySnapshot = await getDocs(collection(db, "admin"));
+querySnapshot.forEach(async (doc) => {
+if(user.email==doc.data().email.toLowerCase()){
+  flag=true
+  Bj=doc.id
+}
+});
+if(flag){
+const cityRef = doc(db, 'admin', Bj);
+await updateDoc(cityRef, {
+time: Timestamp.now()
+});
+}
     location.href='./adminDash.html'
   })
 })
@@ -262,7 +453,7 @@ signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
 Swal.fire({
   icon: "error",
   title: "Oops...",
-  text: `${getLemail} does'nt exist as admin`,
+  text: `${getLemail.value.toLowerCase()} does'nt exist as admin`,
 });
 }
   } 
@@ -270,11 +461,12 @@ Swal.fire({
     let flag=false
     const querySnapshot = await getDocs(collection(db, "customer"));
 querySnapshot.forEach((doc) => {
-if(getLemail.value==doc.data().email){
+if(getLemail.value.toLowerCase()==doc.data().email.toLowerCase()){
 flag=true
 }
 });
 if(flag){
+localStorage.clear()
 signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
 .then((userCredential) => {
   const user = userCredential.user;
@@ -284,7 +476,22 @@ signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
     draggable: true,
     allowOutsideClick:false,
     allowEscapeKey:false,
-  }).then(()=>{
+  }).then(async ()=>{
+    let flag=false
+    let Bj
+    const querySnapshot = await getDocs(collection(db, "customer"));
+querySnapshot.forEach(async (doc) => {
+if(user.email==doc.data().email.toLowerCase()){
+  flag=true
+  Bj=doc.id
+}
+});
+  if(flag){
+    const cityRef = doc(db, 'customer', Bj);
+await updateDoc(cityRef, {
+  time: Timestamp.now()
+});
+  }
     location.href='./customerDash.html'
   })
 })
@@ -301,7 +508,7 @@ signInWithEmailAndPassword(auth, getLemail.value, getLpassword.value)
 Swal.fire({
   icon: "error",
   title: "Oops...",
-  text: `${getLemail} does'nt exist as customer`,
+  text: `${getLemail.toLowerCase()} does'nt exist as customer`,
 });
 }
   }
@@ -310,10 +517,30 @@ Swal.fire({
 });
 })
 }
-if(getLout){
+if(getAdminBody){
+const typed=new Typed('#element',{
+  strings:["Welcome to Admin's Panel",'Add your dishes to serve'],
+  typeSpeed:50,
+  fadeOut:true,
+  backDelay:1000,
+  startDelay:3000,
+  loop:false,
+  cursorChar:'<span class="cursor">_</span>',
+})
 getLout.addEventListener('click',()=>{
+  localStorage.clear()
   signOut(auth).then(()=>{
     Swal.fire({
+      title: "Do you want to logout?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+      allowOutsideClick:false,
+      allowEscapeKey:false,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        Swal.fire({
       title: `You signedout`,
       icon: "success",
       draggable: true,
@@ -322,6 +549,10 @@ getLout.addEventListener('click',()=>{
     }).then(()=>{
       location.href='./index.html'
     })
+      } else if (result.isDenied) {
+        Swal.fire("Didn't logout", "", "info");
+      }
+    });
   }).catch(()=>{
     Swal.fire({
       icon: "error",
@@ -335,72 +566,221 @@ getItemForm.addEventListener('submit',()=>{
   let getItemPrice=document.getElementById('itemprice')
   let getItemDescription=document.getElementById('itemdescription')
   let getItemImage=document.getElementById('itemimage')
+  let getItemCategory=document.getElementById('itemcategory')
   let file=getItemImage.files[0]
   let reader=new FileReader()
   reader.addEventListener('load', async ()=>{
+    let sel
+          Array.from(getItemCategory.childNodes).forEach(cv=>{
+            if(cv.selected){
+              sel=cv
+            }
+          })
     try {
-      const docRef = await addDoc(collection(db, "items"), {
+      const docRef = await addDoc(collection(db, `${id}`), {
         name: getItemName.value,
         price:getItemPrice.value,
         description:getItemDescription.value,
+        category:sel.innerHTML,
         url:reader.result,
-        // time:Timestamp.now(),
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+    getItemName.value=''
+    getItemPrice.value=''
+    getItemDescription.value=''
+    getItemImage.value=''
+    getItemCategory.selectedIndex = 0
     readData()
-  //   getAdminContainer.innerHTML+=`<div class="col">
-  //   <div class="card">
-  //     <img src="${reader.result}" class="card-img-top" alt="...">
-  //     <div class="card-body">
-  //       <h5 class="card-title">${getItemName.value}</h5>
-  //       <p class="card-text">${getItemPrice.value} Rs</p>
-  //       <p class="card-text">${getItemDescription.value}</p>
-  //       <p class="card-text d-flex justify-content-evenly"><button class="btn btn-danger w-25">Delete</button><button class="btn btn-primary w-25">Edit</button></p>
-  //     </div>
-  //   </div>
-  // </div>`
   })
   reader.readAsDataURL(file)
 })
-async function readData(){
+readData=async function(){
+  
   getAdminContainer.innerHTML=''
   let flag=false
-  const querySnapshot = await getDocs(collection(db, "items"));
+  const querySnapshot = await getDocs(collection(db, `${id}`));
 querySnapshot.forEach((doc) => {
   flag=true
-  getAdminContainer.innerHTML+=`<div class="col">
-    <div class="card">
-      <img src="${doc.data().url}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">${doc.data().name}</h5>
-        <p class="card-text">${doc.data().price} Rs</p>
-        <p class="card-text">${doc.data().description}</p>
-        <p class="card-text d-flex justify-content-evenly"><button value='${doc.id}' class="btn btn-danger w-25 bttnsdel">Delete</button><button value='${doc.id}' class="btn btn-primary w-25 bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></p>
-      </div>
-    </div>
-  </div>`
+  getAdminContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;">
+<img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
+<div class="card-body">
+  <h5 class="card-title">${doc.data().name}</h5>
+         <div class="card-text">Rs ${doc.data().price}</div>
+         <div class="card-text">${doc.data().category}</div>
+         <div class="card-text">${doc.data().description}</div>
+         <div class="card-text mt-2 d-flex justify-content-evenly"><button value='${doc.id}' class="card-btn bttnsdel">Delete</button><button value='${doc.id}' class="card-btn bttnsedit" data-bs-toggle="modal" data-bs-target="#staticBuckdrop">Edit</button></div>
+</div>
+</div>`
 });
 if(flag){
   let getBttnsDel=document.querySelectorAll('.bttnsdel')
   let getBttnsEdit=document.querySelectorAll('.bttnsedit')
   Array.from(getBttnsDel).forEach((cv,ci)=>{
-    cv.addEventListener('click',async (e)=>{
-      await deleteDoc(doc(db, "items", e.srcElement.value));
-      readData()
+    cv.addEventListener('click',(e)=>{
+      Swal.fire({
+        title: "Do you want to delete?",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+        allowOutsideClick:false,
+        allowEscapeKey:false,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await deleteDoc(doc(db, `${id}`, e.srcElement.value));
+          Swal.fire({
+        title: `Deleted`,
+        icon: "success",
+        draggable: true,
+        allowOutsideClick:false,
+        allowEscapeKey:false,
+      }).then(()=>{
+        readData()
+      })
+        } else if (result.isDenied) {
+          Swal.fire("Didn't delete", "", "info");
+        }
+      });
     })
-    getBttnsEdit[ci].addEventListener('click',async (e)=>{
-      const cityRef = doc(db, 'users', e.srcElement.value);
-      await updateDoc(cityRef, {
-
-        // name: prompt('Enter updated value'),
-        // time:Timestamp.now()
-    });
+    getBttnsEdit[ci].addEventListener('click',(e)=>{
+      const cityRef = doc(db, `${id}`, e.srcElement.value);
+      let getEditForm=document.getElementById('itemeditform')
+      let getEditName=document.getElementById('itemeditname')
+      let getEditPrice=document.getElementById('itemeditprice')
+      let getEditDescription=document.getElementById('itemeditdescription')
+      let getEditImage=document.getElementById('itemeditimage')
+      let getEditCategory=document.getElementById('itemeditcategory')
+      getEditForm.addEventListener('submit',()=>{
+        let file=getEditImage.files[0]
+        let reader=new FileReader()
+        reader.addEventListener('load',async ()=>{
+          let sel
+          Array.from(getEditCategory.childNodes).forEach(cv=>{
+            if(cv.selected){
+              sel=cv
+            }
+          })
+          await updateDoc(cityRef, {
+            name: getEditName.value,
+            price:getEditPrice.value,
+            category:sel.innerHTML,
+            description:getEditDescription.value,
+            url:reader.result,
+            });
+            getEditName.value=''
+            getEditPrice.value=''
+            getEditDescription.value=''
+            getEditImage.value=''
+            getEditCategory.selectedIndex=0
+              readData()
+        })
+        reader.readAsDataURL(file)
+      })
     })
   })
 }
 }
-readData()
+}
+if(getCustomerBody){
+const typed=new Typed('#elemen',{
+  strings:["Welcome dear user",'Delicious food near your town','Order now'],
+  typeSpeed:50,
+  fadeOut:true,
+  backDelay:1000,
+  startDelay:3000,
+  loop:false,
+  cursorChar:'<span class="cursor">_</span>',
+})
+getLout.addEventListener('click',()=>{
+  localStorage.clear()
+  signOut(auth).then(()=>{
+    Swal.fire({
+      title: "Do you want to logout?",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`,
+      allowOutsideClick:false,
+      allowEscapeKey:false,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        Swal.fire({
+      title: `You signedout`,
+      icon: "success",
+      draggable: true,
+      allowOutsideClick:false,
+      allowEscapeKey:false,
+    }).then(()=>{
+      location.href='./index.html'
+    })
+      } else if (result.isDenied) {
+        Swal.fire("Didn't logout", "", "info");
+      }
+    });
+  }).catch(()=>{
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: error.code+' '+error.message,
+    });
+  })
+})
+customerRead=async function(){
+  getCustomerContainer.innerHTML=''
+  const querySnapshot = await getDocs(collection(db, "customerPanel"));
+querySnapshot.forEach(async (doc) => {
+const querySnapshot = await getDocs(collection(db, `${doc.data().cd}`));
+let n=0
+querySnapshot.forEach((doc) => {
+  getCustomerContainer.innerHTML+=`<div class="card my-2" style="width: 16rem;"><img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;"><div class="card-body"><h5 class="card-title">${doc.data().name}</h5><div class="card-text">Rs <span>${doc.data().price}</span></div><div class="card-text">${doc.data().category}</div><div class="card-text">${doc.data().description}</div><div class="card-text mt-2 d-flex justify-content-evenly"><button value='${n}' class="card-btn bttnsOrder" onclick="addToCart(this)">Order</button></div></div></div>`
+  getBttnsOrder=document.querySelectorAll('.bttnsOrder')
+  // <div class="card my-2" style="width: 16rem;">
+  //   <img src="${doc.data().url}" height="250px" class="card-img-top" alt="..." style="object-fit:cover;">
+  //   <div class="card-body">
+  //     <h5 class="card-title">${doc.data().name}</h5>
+  //     <div class="card-text">Rs ${doc.data().price}</div>
+  //     <div class="card-text">${doc.data().category}</div>
+  //     <div class="card-text">${doc.data().description}</div>
+  //     <div class="card-text mt-2 d-flex justify-content-evenly">
+  //       <button value='${n}' class="card-btn bttnsOrder" onclick="addToCart(this)">Order</button>
+  //     </div>
+  //   </div>
+  // </div>
+n++
+})
+});
+}
+let getCart=document.getElementById('cart')
+if(Number(getPill.firstChild.textContent)==0){
+  getPill.style.display='none'
+}
+function addToCart(e){
+  getPill.style.display='inline'
+  getPill.firstChild.textContent=Number(getPill.firstChild.textContent)+1
+  let a=e.parentNode.parentNode.parentNode.cloneNode(true)
+  a.lastChild.lastChild.firstChild.innerText='Cancel'
+  a.lastChild.lastChild.firstChild.setAttribute('onclick','removeFromCart(this)')
+  e.disabled=true
+  e.style.opacity=0.5
+  getCart.innerHTML+=`<div class="card my-2" style="width: 16rem;">${a.innerHTML}</div>`
+  getBill.innerText=Number(getBill.innerText)+Number(a.firstChild.nextSibling.firstChild.nextSibling.firstChild.nextSibling.innerText)
+}
+window.addToCart=addToCart
+function removeFromCart(e){
+  Array.from(getBttnsOrder).forEach(cv=>{
+    if(cv.value==e.value){
+      cv.disabled=false
+  cv.style.opacity=1
+    }
+  })
+  getBill.innerText=Number(getBill.innerText)-Number(e.parentNode.parentNode.firstChild.nextSibling.firstChild.nextSibling.innerText)
+  e.parentNode.parentNode.parentNode.remove()
+  getPill.firstChild.textContent=Number(getPill.firstChild.textContent)-1
+  if(Number(getPill.firstChild.textContent)==0){
+    getPill.style.display='none'
+  }
+}
+window.removeFromCart=removeFromCart
 }
