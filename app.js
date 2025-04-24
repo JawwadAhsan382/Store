@@ -148,7 +148,7 @@ getSclose.addEventListener('click',()=>{
     title: "How do you want to signup as?",
     showDenyButton: true,
     allowEscapeKey:false,
-    allowOutsideClick:false,
+    allowOutsideClick:true,
     draggable:false,
     confirmButtonText: "Admin",
     denyButtonText: "Customer"
@@ -400,7 +400,7 @@ Swal.fire({
   title: "How do you want to login as?",
   showDenyButton: true,
   allowEscapeKey:false,
-  allowOutsideClick:false,
+  allowOutsideClick:true,
   draggable:false,
   confirmButtonText: "Admin",
   denyButtonText: "Customer"
@@ -440,7 +440,9 @@ await updateDoc(cityRef, {
 time: Timestamp.now()
 });
 }
-    location.href='./adminDash.html'
+getLemail.value=''
+getLpassword.value=''    
+location.href='./adminDash.html'
   })
 })
 .catch((error) => {
@@ -495,7 +497,9 @@ await updateDoc(cityRef, {
   time: Timestamp.now()
 });
   }
-    location.href='./customerDash.html'
+  getLemail.value=''
+  getLpassword.value=''  
+  location.href='./customerDash.html'
   })
 })
 .catch((error) => {
@@ -515,8 +519,6 @@ Swal.fire({
 });
 }
   }
-  getLemail.value=''
-  getLpassword.value=''
 });
 })
 }
@@ -721,6 +723,10 @@ if(e.srcElement.value==doc.id){
 }
 }
 if(getCustomerBody){
+let getCart=document.getElementById('cart')
+if(Number(getPill.firstChild.textContent)==0){
+  getPill.style.display='none'
+}
 let abc
 let getFilterResult=document.querySelector('.filterresult')
 let getfilterResultPanel=document.getElementById('filterresultpanel')
@@ -803,10 +809,6 @@ n++
 getBttnsOrder=document.querySelectorAll('.bttnsOrder')
 });
 }
-let getCart=document.getElementById('cart')
-if(Number(getPill.firstChild.textContent)==0){
-  getPill.style.display='none'
-}
 function addToCart(e){
   getPill.style.display='inline'
   getPill.firstChild.textContent=Number(getPill.firstChild.textContent)+1
@@ -823,8 +825,18 @@ function addToCart(e){
 }
 window.addToCart=addToCart
 function removeFromCart(e){
+  let x=0
+  let flag=true
+  Array.from(getCart.childNodes).forEach(cv=>{
+    if(cv.lastChild.lastChild.lastChild.value==e.value){
+      x++
+    }
+  })
+  if(x>=2){
+    flag=false
+  }
   Array.from(getBttnsOrder).forEach(cv=>{
-    if(cv.value==e.value){
+    if(cv.value==e.value && flag){
       cv.disabled=false
   cv.style.opacity=1  
     }
