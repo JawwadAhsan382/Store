@@ -721,38 +721,32 @@ if(e.srcElement.value==doc.id){
 }
 }
 if(getCustomerBody){
-let L
-let tempVar=document.querySelector('.tempvar')
+let abc
 let getFilterResult=document.querySelector('.filterresult')
 let getfilterResultPanel=document.getElementById('filterresultpanel')
 let getCross=document.getElementById('crossbtn')
 getCross.addEventListener('click',()=>{
-  // getfilterResultPanel.style.display='none'
-  // getCustomerContainer.innerHTML=tempVar.innerHTML
-  location.reload()
+  getfilterResultPanel.style.display='none' 
+  abc.forEach(cv=>{
+    cv.style.display='none'
+    Array.from(getCustomerContainer.childNodes).forEach(cv=>{
+      cv.style.display='block'
+    })
+  })
 })
 getSearchForm.addEventListener('submit',()=>{
-  
-  if(getCustomerContainer.innerHTML=='' || getCustomerContainer.childNodes.length!=L){
-    // getCustomerContainer.innerHTML=tempVar.innerHTML
-    getCustomerContainer.innerHTML=tempVar.cloneNode(true).innerHTML
-  }
   let getSearchField=document.getElementById('searchfield')
-  let abc=Array.from(getCustomerContainer.childNodes).filter(cv=>{
+  abc=Array.from(getCustomerContainer.childNodes).filter(cv=>{
     return cv.childNodes[1].childNodes[2].innerText.toLowerCase().indexOf(getSearchField.value.split(' ').filter(cv=>cv).join(' ').toLowerCase())!=-1 || cv.childNodes[1].childNodes[3].innerText.toLowerCase().indexOf(getSearchField.value.split(' ').filter(cv=>cv).join(' ').toLowerCase())!=-1 || cv.childNodes[1].childNodes[0].innerText.toLowerCase().indexOf(getSearchField.value.split(' ').filter(cv=>cv).join(' ').toLowerCase())!=-1
   })
+  Array.from(getCustomerContainer.childNodes).forEach(cv=>{
+    cv.style.display='none'
+  })
+  abc.forEach(cv=>{
+    cv.style.display='block'
+  })
   getFilterResult.innerText=abc.length
-  getfilterResultPanel.style.display='flex'
-  // tempVar.innerHTML=getCustomerContainer.innerHTML
-  tempVar.innerHTML=getCustomerContainer.cloneNode(true).innerHTML
-  if(abc.length){
-    getCustomerContainer.innerHTML=''
-    abc.forEach(cv=>{
-      getCustomerContainer.appendChild(cv)
-    })
-  }else{
-    getCustomerContainer.innerHTML=''
-  }
+  getfilterResultPanel.style.display='flex' 
 })
 const typed=new Typed('#elemen',{
   strings:["Welcome dear user",'Delicious food near your town','Order now'],
@@ -807,7 +801,6 @@ querySnapshot.forEach((doc) => {
 n++
 })
 getBttnsOrder=document.querySelectorAll('.bttnsOrder')
-L=getCustomerContainer.childNodes.length
 });
 }
 let getCart=document.getElementById('cart')
@@ -818,28 +811,18 @@ function addToCart(e){
   getPill.style.display='inline'
   getPill.firstChild.textContent=Number(getPill.firstChild.textContent)+1
   let a=e.parentNode.parentNode.parentNode.cloneNode(true)
-  a.lastChild.lastChild.firstChild.innerText='Cancel'
-  a.lastChild.lastChild.firstChild.setAttribute('onclick','removeFromCart(this)')
+  a.lastChild.lastChild.appendChild(a.lastChild.lastChild.firstChild.cloneNode(true))
+  a.lastChild.lastChild.firstChild.innerHTML='<b><i class="fa-solid fa-plus"></i></b>'
+  a.lastChild.lastChild.firstChild.setAttribute('onclick','plus(this)')
+  a.lastChild.lastChild.lastChild.innerHTML='<b><i class="fa-solid fa-minus"></i></b>'
+  a.lastChild.lastChild.lastChild.setAttribute('onclick','removeFromCart(this)')
   e.disabled=true
   e.style.opacity=0.5
-  // tempVar.innerHTML=getCustomerContainer.innerHTML
-  Array.from(tempVar.childNodes).forEach(cv=>{
-    if(cv.lastChild.lastChild.firstChild.value==e.value){
-      cv.lastChild.lastChild.firstChild.disabled=true
-      cv.lastChild.lastChild.firstChild.style.opacity=0.5
-    }
-  })
   getCart.innerHTML+=`<div class="card my-2" style="width: 16rem;">${a.innerHTML}</div>`
   getBill.innerText=Number(getBill.innerText)+Number(a.firstChild.nextSibling.firstChild.nextSibling.firstChild.nextSibling.innerText)
 }
 window.addToCart=addToCart
 function removeFromCart(e){
-  Array.from(tempVar.childNodes).forEach(cv=>{
-    if(cv.lastChild.lastChild.firstChild.value==e.value){
-      cv.lastChild.lastChild.firstChild.disabled=false
-      cv.lastChild.lastChild.firstChild.style.opacity=1
-    }
-  })
   Array.from(getBttnsOrder).forEach(cv=>{
     if(cv.value==e.value){
       cv.disabled=false
@@ -854,4 +837,11 @@ function removeFromCart(e){
   }
 }
 window.removeFromCart=removeFromCart
+function plus(e){
+  getPill.firstChild.textContent=Number(getPill.firstChild.textContent)+1
+  let a=e.parentNode.parentNode.parentNode.cloneNode(true)
+  getCart.innerHTML+=`<div class="card my-2" style="width: 16rem;">${a.innerHTML}</div>`
+  getBill.innerText=Number(getBill.innerText)+Number(a.firstChild.nextSibling.firstChild.nextSibling.firstChild.nextSibling.innerText)
+}
+window.plus=plus
 }
