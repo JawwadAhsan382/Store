@@ -735,9 +735,9 @@ getCross.addEventListener('click',()=>{
   getfilterResultPanel.style.display='none' 
   abc.forEach(cv=>{
     cv.style.display='none'
-    Array.from(getCustomerContainer.childNodes).forEach(cv=>{
-      cv.style.display='block'
-    })
+  })
+  Array.from(getCustomerContainer.childNodes).forEach(cv=>{
+    cv.style.display='block'
   })
 })
 getSearchForm.addEventListener('submit',()=>{
